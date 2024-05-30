@@ -1,6 +1,6 @@
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour
 {
@@ -8,6 +8,7 @@ public class GameController : MonoBehaviour
 
     [SerializeField]
     private GameObject battleMenu;
+
     void Start()
     {
         fighterStats = new List<FighterStats>();
@@ -29,6 +30,12 @@ public class GameController : MonoBehaviour
 
     public void NextTurn()
     {
+        if (IsBattleEnded())
+        {
+            LoadMainScene();
+            return;
+        }
+
         FighterStats currentFighterStats = fighterStats[0];
         fighterStats.Remove(currentFighterStats);
         if (!currentFighterStats.GetDead())
@@ -42,14 +49,12 @@ public class GameController : MonoBehaviour
             {
                 this.battleMenu.SetActive(true);
             }
-
             else
             {
                 string attackType = Random.Range(0, 2) == 1 ? "melee" : "heal";
                 currentUnit.GetComponent<FighterAction>().SelectAttack(attackType);
             }
         }
-
         else
         {
             NextTurn();
@@ -60,5 +65,31 @@ public class GameController : MonoBehaviour
     {
         this.battleMenu.SetActive(false);
         NextTurn();
+    }
+
+    private bool IsBattleEnded()
+    {
+        bool heroAlive = false;
+        bool enemyAlive = false;
+
+        foreach (FighterStats fighter in fighterStats)
+        {
+            if (fighter.gameObject.tag == "Hero" && !fighter.GetDead())
+            {
+                heroAlive = true;
+            }
+            if (fighter.gameObject.tag == "Enemy" && !fighter.GetDead())
+            {
+                enemyAlive = true;
+            }
+        }
+
+        return !heroAlive || !enemyAlive;
+    }
+
+    private void LoadMainScene()
+    {
+        // Replace "MainScene" with the actual name of your main scene
+        SceneManager.LoadScene("World");
     }
 }

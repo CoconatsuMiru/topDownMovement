@@ -4,7 +4,7 @@ using UnityEngine.SceneManagement;
 public class RandomEncounter : MonoBehaviour
 {
     [SerializeField]
-    private float encounterChance = 0.1f; // 10% chance per step
+    private float encounterChance = 0.01f; // 10% chance per step
 
     [SerializeField]
     private string battleSceneName = "Battle Scene";
